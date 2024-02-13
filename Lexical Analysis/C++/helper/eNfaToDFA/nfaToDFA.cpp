@@ -58,98 +58,6 @@ int concat(set <int> states)
     return ans;   
 }
 
-// function to get epsilon closure
-set <int> epClosure(int currentState, const vector <nfaNode>& NFA)
-{
-    set <int> closure;
-    stack <int> stateStack;
-    set <int> visited;  // New set to track visited states
-
-    // Push the initial state onto the stack and mark it as visited
-    stateStack.push(currentState);
-    closure.insert(currentState);
-    visited.insert(currentState);
-
-    while (!stateStack.empty())
-    {
-        currentState = stateStack.top();
-        stateStack.pop();
-
-        // Check if epsilon transition exists
-        auto epsilonTransition = NFA[currentState].transition.find('e');
-
-        if (epsilonTransition != NFA[currentState].transition.end()) 
-        {
-            for (int trans : epsilonTransition->second)
-            {
-                // Check if the state is not in closure and not visited
-                if (closure.find(trans) == closure.end() && visited.find(trans) == visited.end()) 
-                {
-                    closure.insert(trans);
-                    stateStack.push(trans);
-                    visited.insert(trans);
-                }
-            }
-        }
-    }
-
-    return closure;
-}
-
-// function to make NFA from e-NFA
-nfa eNfatoNFA(const nfa& eNFA)
-{
-    int numStates = eNFA.states.size();
-    nfa NFA(numStates);
-
-    // iterate over each state
-    for (const nfaNode& state : eNFA.states)
-    {
-        // calculate epsilon closure of state
-        set <int> first = epClosure(state.state, eNFA.states);
-
-        for (char symbol : {'0', '1'})
-        {
-            // do the required transition
-            set <int> second;
-            
-            for (int value : first)
-            {
-                set <int> temp = eNFA.states[value].transition[symbol];
-                if (!temp.empty())
-                    second.insert(temp.begin(), temp.end());
-            }
-
-            // take epsilon closure again
-            set <int> ans;
-
-            for (int value : second)
-            {
-                set <int> arr = epClosure(value, eNFA.states);
-                if (!arr.empty())
-                    ans.insert(arr.begin(), arr.end());
-            }
-
-            // assign it to the state of NFA
-            NFA.states[state.state].transition[symbol] = ans;
-            NFA.states[state.state].acceptance = false;
-        }
-    }
-
-    for (int state = 0; state < NFA.states.size(); state++)
-    {
-        bool isAccepting = false;
-        set <int> closure = epClosure(state, eNFA.states);
-        for (int x : closure)
-            if (eNFA.states[x].acceptance)
-                isAccepting = true;
-
-        NFA.states[state].acceptance = isAccepting;
-    }
-
-    return NFA;
-}
-
 // function to convert an NFA (without ep) to DFA
 dfa nfaToDFA(nfa NFA)
 {
@@ -178,7 +86,6 @@ dfa nfaToDFA(nfa NFA)
 
         // get the transition states for the current state
         set <int> zeroTransition, oneTransition;
-
         for (int state : currentState) 
         {
             zeroTransition.insert(NFA.states[state].transition['0'].begin(), NFA.states[state].transition['0'].end());
@@ -242,20 +149,41 @@ dfa nfaToDFA(nfa NFA)
 
 int main()
 {
-    // create an epsilon-NFA
-    nfa eNFA(4);
-    eNFA.states[0].transition['1'] = {1, 3};
-    eNFA.states[0].transition['e'] = {2};
-    eNFA.states[1].transition['0'] = {0, 2, 3};
-    eNFA.states[1].transition['3'] = {1, 3};
-    eNFA.states[2].transition['2'] = {0, 1};
-    eNFA.states[2].transition['1'] = {1, 2};
-    eNFA.states[3].transition['0'] = {0, 1};
-    eNFA.states[3].transition['3'] = {1, 2, 3};
-    eNFA.states[0].acceptance = true;
+    // create an NFA
+    nfa NFA(2);
+    NFA.states[0].transition['1'] = {1, 0};
+    NFA.states[1].transition['0'] = {1};
+    NFA.states[0].acceptance = true;
 
-    // convert the epsilon-NFA to a regular NFA
-    nfa NFA = eNfatoNFA(eNFA);
+    // convert the NFA to a DFA
+    dfa DFA = nfaToDFA(NFA);
+
+    // print the DFA
+    cout << "DFA: " << endl;
+    for (int i = 0; i < DFA.states.size(); i++)
+    {
+        cout << "State " << i << ": ";
+        for (const auto& transition : DFA.states[i].transition)
+        {
+            cout << "On " << transition.first << " -> " << transition.second << " ";
+        }
+        if (DFA.states[i].acceptance)
+        {
+            cout << "Acceptance";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+
+int main()
+{
+    // create an epsilon-NFA
+    nfa NFA(2);
+    NFA.states[0].transition['1'] = {1};
+    NFA.states[1].transition['0'] = {1};
+    NFA.states[0].acceptance = true;
 
     // convert the NFA to a DFA
     dfa DFA = nfaToDFA(NFA);

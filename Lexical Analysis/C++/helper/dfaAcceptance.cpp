@@ -2,11 +2,7 @@
     Program which checks if an input string w => {0, 1}* is accepted by given DFA or not
 */
 
-#include<unordered_map>
-#include<iostream>
-#include<algorithm>
-#include<vector>
-#include<string>
+#include<bits/stdc++.h>
 
 using namespace std;
 
