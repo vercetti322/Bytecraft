@@ -44,20 +44,6 @@ struct dfa
     dfa(int initial) : initialState(initial) {}
 };
 
-// function to concatenate a set of ints
-int concat(set <int> states)
-{
-    int ans = 0;
-    int k = 1;
-    for (auto it = states.rend(); it != states.rbegin(); it--)
-    {
-        ans += *(it) * k;
-        k *= 10;
-    }
-
-    return ans;   
-}
-
 // function to get epsilon closure
 set <int> epClosure(int currentState, const vector <nfaNode>& NFA)
 {
@@ -150,7 +136,6 @@ nfa eNfatoNFA(const nfa& eNFA)
     return NFA;
 }
 
-// function to convert an NFA (without ep) to DFA
 dfa nfaToDFA(nfa NFA)
 {
     // initialise a dfa with initial state of NFA
@@ -168,8 +153,10 @@ dfa nfaToDFA(nfa NFA)
     queue <set <int>> stateQueue;
 
     // push the initial state of NFA onto the queue
-    stateQueue.push({0});
-    visited.insert({0});
+    set <int> initialState = {0};
+    stateQueue.push(initialState);
+    visited.insert(initialState);
+    stateNumbers[initialState] = 0;
 
     while (!stateQueue.empty())
     {
@@ -181,8 +168,14 @@ dfa nfaToDFA(nfa NFA)
 
         for (int state : currentState) 
         {
-            zeroTransition.insert(NFA.states[state].transition['0'].begin(), NFA.states[state].transition['0'].end());
-            oneTransition.insert(NFA.states[state].transition['1'].begin(), NFA.states[state].transition['1'].end());
+            for (int nextState : NFA.states[state].transition['0'])
+            {
+                zeroTransition.insert(nextState);
+            }
+            for (int nextState : NFA.states[state].transition['1'])
+            {
+                oneTransition.insert(nextState);
+            }
         }
 
         // check if the state is not visited
@@ -243,16 +236,17 @@ dfa nfaToDFA(nfa NFA)
 int main()
 {
     // create an epsilon-NFA
-    nfa eNFA(4);
-    eNFA.states[0].transition['1'] = {1, 3};
-    eNFA.states[0].transition['e'] = {2};
-    eNFA.states[1].transition['0'] = {0, 2, 3};
-    eNFA.states[1].transition['3'] = {1, 3};
-    eNFA.states[2].transition['2'] = {0, 1};
-    eNFA.states[2].transition['1'] = {1, 2};
-    eNFA.states[3].transition['0'] = {0, 1};
-    eNFA.states[3].transition['3'] = {1, 2, 3};
-    eNFA.states[0].acceptance = true;
+    nfa eNFA(3);
+    eNFA.states[0].transition['e'] = {1};
+    eNFA.states[0].transition['2'] = {0};
+    eNFA.states[1].transition['e'] = {2};
+    eNFA.states[1].transition['1'] = {1};
+    eNFA.states[2].transition['1'] = {1};
+    eNFA.states[2].transition['2'] = {1};
+    eNFA.states[2].acceptance = true;
+
+    for (int x : epClosure(0, eNFA.states))
+        cout << x << endl;
 
     // convert the epsilon-NFA to a regular NFA
     nfa NFA = eNfatoNFA(eNFA);
