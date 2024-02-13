@@ -118,7 +118,6 @@ nfa eNfatoNFA(const nfa& eNFA)
 
             // assign it to the state of NFA
             NFA.states[state.state].transition[symbol] = ans;
-            NFA.states[state.state].acceptance = false;
         }
     }
 
@@ -138,94 +137,73 @@ nfa eNfatoNFA(const nfa& eNFA)
 
 dfa nfaToDFA(nfa NFA)
 {
-    // initialise a dfa with initial state of NFA
     dfa DFA(0);
     DFA.states.push_back(dfaNode());
 
-    // map to assign a unique number to each set of states
     map <set <int>, int> stateNumbers;
     stateNumbers[{0}] = 0;
 
-    // set to keep track of visited states
-    set <set <int>> visited;
-
-    // queue to keep track of states to be visited
+    map <set <int>, bool> visited;
     queue <set <int>> stateQueue;
 
-    // push the initial state of NFA onto the queue
     set <int> initialState = {0};
     stateQueue.push(initialState);
-    visited.insert(initialState);
+    visited[initialState] = true;
     stateNumbers[initialState] = 0;
 
     while (!stateQueue.empty())
     {
-        set <int> currentState = stateQueue.front();
+        set<int> currentState = stateQueue.front();
         stateQueue.pop();
 
-        // get the transition states for the current state
-        set <int> zeroTransition, oneTransition;
-
-        for (int state : currentState) 
+        for (char symbol : {'0', '1'})
         {
-            for (int nextState : NFA.states[state].transition['0'])
+            set<int> nextState;
+
+            for (int nfaState : currentState)
             {
-                zeroTransition.insert(nextState);
+                if (NFA.states[nfaState].transition.find(symbol) != NFA.states[nfaState].transition.end())
+                {
+                    nextState.insert(NFA.states[nfaState].transition[symbol].begin(), NFA.states[nfaState].transition[symbol].end());
+                }
             }
-            for (int nextState : NFA.states[state].transition['1'])
+
+            if (!nextState.empty())
             {
-                oneTransition.insert(nextState);
+                auto it = stateNumbers.find(nextState);
+                int nextStateNumber;
+
+                if (it == stateNumbers.end())
+                {
+                    nextStateNumber = stateNumbers.size();
+                    stateQueue.push(nextState);
+                    visited[nextState] = true;
+                    stateNumbers[nextState] = nextStateNumber;
+                    DFA.states.push_back(dfaNode());
+                }
+                else
+                {
+                    nextStateNumber = it -> second;
+                }
+
+                DFA.states[stateNumbers[currentState]].transition[symbol] = stateNumbers[nextState];
+            }
+
+            else
+            {
+                std::cerr << "Empty nextState for state " << stateNumbers[currentState] << " and symbol " << symbol << std::endl;
             }
         }
-
-        // check if the state is not visited
-        if (visited.find(zeroTransition) == visited.end())
-        {
-            // mark the state as visited
-            visited.insert(zeroTransition);
-
-            // push the state onto the queue
-            stateQueue.push(zeroTransition);
-
-            // add the state to the DFA
-            DFA.states.push_back(dfaNode());
-
-            // assign a unique number to the state
-            stateNumbers[zeroTransition] = DFA.states.size() - 1;
-        }
-
-        // check if the state is not visited
-        if (visited.find(oneTransition) == visited.end())
-        {
-            // mark the state as visited
-            visited.insert(oneTransition);
-
-            // push the state onto the queue
-            stateQueue.push(oneTransition);
-
-            // add the state to the DFA
-            DFA.states.push_back(dfaNode());
-
-            // assign a unique number to the state
-            stateNumbers[oneTransition] = DFA.states.size() - 1;
-        }
-
-        // set the transition states for the current state
-        DFA.states[stateNumbers[currentState]].transition['0'] = stateNumbers[zeroTransition];
-        DFA.states[stateNumbers[currentState]].transition['1'] = stateNumbers[oneTransition];
     }
 
-    // set the acceptance states for the DFA
-    for (int i = 0; i < NFA.states.size(); i++)
+    for (const auto &state : stateNumbers)
     {
-        if (NFA.states[i].acceptance)
+        for (int x : state.first)
         {
-            for (const auto& state : visited)
+            if (NFA.states[x].acceptance)
             {
-                if (state.find(i) != state.end())
-                {
-                    DFA.states[stateNumbers[state]].acceptance = true;
-                }
+                DFA.states[state.second].acceptance = true;
+                break;
             }
         }
     }
@@ -235,18 +213,15 @@ dfa nfaToDFA(nfa NFA)
 
 int main()
 {
-    // create an epsilon-NFA
-    nfa eNFA(3);
-    eNFA.states[0].transition['e'] = {1};
-    eNFA.states[0].transition['2'] = {0};
-    eNFA.states[1].transition['e'] = {2};
-    eNFA.states[1].transition['1'] = {1};
-    eNFA.states[2].transition['1'] = {1};
-    eNFA.states[2].transition['2'] = {1};
-    eNFA.states[2].acceptance = true;
+    nfa eNFA(2);
 
-    for (int x : epClosure(0, eNFA.states))
-        cout << x << endl;
+    // State 0 transitions
+    eNFA.states[0].transition['e'] = {1};  
+    eNFA.states[0].transition['0'] = {0};  
+
+    // State 1 transitions
+    eNFA.states[1].transition['1'] = {1};  
+    eNFA.states[1].acceptance = true;
 
     // convert the epsilon-NFA to a regular NFA
     nfa NFA = eNfatoNFA(eNFA);
