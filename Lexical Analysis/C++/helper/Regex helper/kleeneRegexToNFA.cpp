@@ -23,34 +23,25 @@ struct nfa
 };
 
 // or (regex to e-nfa)
-struct nfa orRegexToNFA(int a, int b)
+struct nfa orRegexToNFA(int a)
 {
-    // let start be 0, a and b and final state be std::max(a, b) + 1
-    // create a 4 state nfa
-    nfa NFA(4, 0);
-    int fin = std::max(a, b) + 1;
-    NFA.states[0].state = 0;
-    NFA.states[1].state = a;
-    NFA.states[2].state = b;
-    NFA.states[3].state = fin;
-    NFA.states[3].acceptance = true;
+    // let start be a
+    nfa NFA(1, a);
 
-    // create epsilon transitions from a + b -> a and b
-    NFA.states[0].transition['e'].insert(a);
-    NFA.states[0].transition['e'].insert(b);
+    NFA.states[0].state = a;
+    NFA.states[0].acceptance = true;
 
-    // create epsilon transtions from a and b -> a * b
-    NFA.states[a].transition['e'].insert(fin);
-    NFA.states[b].transition['e'].insert(fin);
+    // create self transitions from 0 -> 0
+    NFA.states[0].transition['a'].insert(a);
 
     return NFA;
 }
 
 int main()
 {
-    // Create NFA for a | b with a = 1 and b = 2
-    int a = 1, b = 2;
-    auto NFA = orRegexToNFA(a, b);
+    // Create NFA for a* with a = 1
+    int a = 1;
+    auto NFA = orRegexToNFA(a);
 
     // Print NFA transitions
     for (const auto& node : NFA.states) {
