@@ -62,7 +62,6 @@ nfa regexToNFA(string regex)
 
             // push to stack
             nfaStack.push(NFA);
-
         }
 
         else if (c == '.')
@@ -343,7 +342,8 @@ nfa regexToNFA(string regex)
 
 int main() 
 {
-    string regex = "ab.";
+    // bab.|+bab.|*a.
+    string regex = "bab.|+ba.|*a.";
     nfa result = regexToNFA(regex);
 
     for (nfaNode &node : result.states)  // Use references here
