@@ -62,6 +62,7 @@ nfa regexToNFA(string regex)
 
             // push to stack
             nfaStack.push(NFA);
+            cout << c << " added!" << endl;
         }
 
         else if (c == '.')
@@ -294,46 +295,26 @@ nfa regexToNFA(string regex)
             nfa NFA = nfaStack.top();
             nfaStack.pop();
 
-            // create two states
-            nfaNode start;
-            start.state = stateCounter++;
-            start.acceptance = false;
+            // Create a new end state
+            nfaNode newEnd;
+            newEnd.state = stateCounter++;
+            newEnd.acceptance = true;
 
-            nfaNode end;
-            end.state = stateCounter++;
-            end.acceptance = true;
+            // Add an epsilon transition from the start state to the new end state
+            NFA.states.push_back(newEnd);
+            NFA.states[NFA.initialState].transition['e'].insert(newEnd.state);
 
-            // join new start state to the initial state of NFA and the new end state
-            start.transition['e'].insert(NFA.initialState);
-            start.transition['e'].insert(end.state);
-
-
-            // join final states of NFA to the new end state
-            for (nfaNode &node : NFA.states) 
+            // Add an epsilon transition from the old end state to the new end state
+            for (nfaNode &node : NFA.states)
             {
-                if (node.acceptance) {
-                    node.acceptance = false;
-                    node.transition['e'].insert(end.state);
-                }
-            }
-
-            // The new NFA has all states of nfa1 and the new start and end states
-            nfa newNFA(NFA.states.size() + 2, start.state);
-            newNFA.states[start.state] = start;
-            newNFA.states[end.state] = end;
-            
-            for (int i = 0; i < NFA.states.size(); i++)
-            {
-                if (i != start.state && i != end.state)
+                if (node.acceptance)
                 {
-                    newNFA.states[i] = NFA.states[i];
+                    node.transition['e'].insert(newEnd.state);
+                    node.acceptance = false;  
                 }
             }
-
-            newNFA.initialState = start.state;
-
-            // push on stack
-            nfaStack.push(newNFA);
+    
+            nfaStack.push(NFA);
         }
     }
 
@@ -342,8 +323,8 @@ nfa regexToNFA(string regex)
 
 int main() 
 {
-    // bab.|+bab.|*a.
-    string regex = "bab.|+ba.|*a.";
+    // bab.|+bab.|*a.|
+    string regex = "abb?";
     nfa result = regexToNFA(regex);
 
     for (nfaNode &node : result.states)  // Use references here
