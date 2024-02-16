@@ -335,6 +335,34 @@ vector <vector <int>> generateNFA(string r)
     return nfaTrans;
 }
 
+// get epsilon closure
+vector <int> epclosure(vector <vector <int>> nfa, int state)
+{
+    vector <int> closure;
+    stack <int> st;
+    st.push(state);
+    closure.push_back(state);
+
+    while (!st.empty())
+    {
+        int top = st.top(); st.pop();
+
+        for (int i = 0; i < nfa.size(); i++)
+        {
+            if (nfa[i][0] == top && nfa[i][1] == 2) // if the transition is epsilon
+            {
+                if (find(closure.begin(), closure.end(), nfa[i][2]) == closure.end())
+                {
+                    closure.push_back(nfa[i][2]);
+                    st.push(nfa[i][2]);
+                }
+            }
+        }
+    }
+
+    return closure;
+}
+
 int main()
 {
     string s;
@@ -360,7 +388,16 @@ int main()
     }
 
     cout << "Final state: " << finalStateENFA << endl;
-        
+
+    // print the epsilon closure of all states
+    for (int i = 0; i < finalStateENFA; i++)
+    {
+        vector <int> closure = epclosure(nfa, i);
+        cout << "Epsilon closure of state " << i << ": ";
+        for (int j = 0; j < closure.size(); j++)
+            cout << closure[j] << " ";
+        cout << endl;
+    }
 }
 
 // (((((a)*)(b))(((a)*)((b)((a)*))))*)
