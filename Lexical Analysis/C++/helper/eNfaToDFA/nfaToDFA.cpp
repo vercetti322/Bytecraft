@@ -44,20 +44,6 @@ struct dfa
     dfa(int initial) : initialState(initial) {}
 };
 
-// function to concatenate a set of ints
-int concat(set <int> states)
-{
-    int ans = 0;
-    int k = 1;
-    for (auto it = states.rend(); it != states.rbegin(); it--)
-    {
-        ans += *(it) * k;
-        k *= 10;
-    }
-
-    return ans;   
-}
-
 // function to convert an NFA (without ep) to DFA
 dfa nfaToDFA(nfa NFA)
 {
