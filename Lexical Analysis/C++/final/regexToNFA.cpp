@@ -4,6 +4,21 @@ using namespace std;
 
 // alphabet set : ('a', 'b')
 
+/*
+    Base Part
+    *
+    *
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    Structures to hold nfa
+
+*/
+
 struct nfaNode
 {
     int state;
@@ -23,6 +38,132 @@ struct nfa
     // constructor to initialize the DFA
     nfa(int numStates, int initial) : states(numStates), initialState(initial) {}
 };
+
+/*
+    First Part
+    *
+    *
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    Functions to convert infix to postfix
+*/
+string insertConcat(string s)
+{
+    string result;
+    for (size_t i = 0; i < s.size(); ++i) 
+    {
+        result += s[i];
+        if (i < s.size() - 1 && (isalnum(s[i]) || s[i] == ')' || s[i] == '*') && (isalnum(s[i + 1]) || s[i + 1] == '('))
+            result += '.';
+    }
+
+    return result;
+}
+
+
+// a character is an operator or not
+bool isOperator(char c) 
+{
+    return (c == '+' || c == '*' || c == '|' || c == '?' || c == '.');
+}
+
+// precedence of an operator
+int opPrecedence(char op) 
+{
+    if (op == '+' || op == '?')
+        return 1;
+
+    else if (op == '*')
+        return 2;
+
+    else if (op == '|')
+        return 3;
+
+    else if (op == '.')
+        return 4;
+
+    return 0; 
+}
+
+// Function to convert infix expression to postfix
+string infixToPostfix(string& infix) 
+{
+    string postfix;
+    stack <char> stack;
+
+    for (int i = 0; i < infix.size(); i++) 
+    {
+        char c = infix[i];
+
+        if (isalnum(c)) 
+        {
+            postfix += c;
+            if (i + 1 < infix.size() && (isalnum(infix[i + 1]) || infix[i + 1] == '(') && infix[i + 1] != ')')
+            {
+                postfix += '.';
+                stack.push('.');
+            }
+        }
+        
+        else if (c == '(')
+            stack.push(c);
+
+        else if (c == ')') 
+        {
+            while (!stack.empty() && stack.top() != '(') 
+            {
+                postfix += stack.top();
+                stack.pop();
+            }
+
+            stack.pop(); // pop '('
+
+            if (i + 1 < infix.size() && (isalnum(infix[i + 1]) || infix[i + 1] == '(') && infix[i + 1] != ')')
+            {
+                postfix += '.';
+                stack.push('.');
+            }
+        } 
+        
+        else if (isOperator(c)) 
+        {
+            while (!stack.empty() && opPrecedence(c) <= opPrecedence(stack.top())) 
+            {
+                postfix += stack.top();
+                stack.pop();
+            }
+
+            stack.push(c);
+        }
+    }
+
+    while (!stack.empty()) 
+    {
+        postfix += stack.top();
+        stack.pop();
+    }
+
+    return postfix;
+}
+
+/*
+    Second Part
+    *
+    *
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    Functions to convert postfix to nfa
+*/
 
 // function to make regex postfix to nfa with epsilon transitions
 nfa regexToNFA(string regex)
@@ -62,7 +203,6 @@ nfa regexToNFA(string regex)
 
             // push to stack
             nfaStack.push(NFA);
-            cout << c << " added!" << endl;
         }
 
         else if (c == '.')
@@ -126,10 +266,10 @@ nfa regexToNFA(string regex)
             // make new start state and end state
             nfaNode start;
             start.state = stateCounter++;
+            start.acceptance = false;
 
             nfaNode end;
             end.state = stateCounter++;
-            start.acceptance = false;
             end.acceptance = true;
 
             // joint new start state to initial states of NFA's
@@ -157,31 +297,53 @@ nfa regexToNFA(string regex)
 
 
             // create nfa
-            nfa NFA(NFA1.states.size() + NFA2.states.size() + 2, start.state);
-            NFA.states[start.state] = start;
-            NFA.states[end.state] = end;
+            nfa NFA(0, 0);
+            NFA.states.push_back(start); // Add start state
 
-            // Copy states from NFA1 to NFA, excluding start and end states
-            for (int i = 0; i < NFA1.states.size(); i++)
+            for (const auto &state : NFA1.states)
             {
-                if (i != start.state && i != NFA1.states.size() && i != end.state)
+                if (state.state != start.state && state.state != end.state)
                 {
-                    NFA.states[i] = NFA1.states[i];
+                    NFA.states.push_back(state);
                 }
             }
 
-            // Copy states from NFA2 to NFA, excluding start and end states
-            for (int i = 0; i < NFA2.states.size(); i++)
+            for (const auto &state : NFA2.states)
             {
-                if (i != start.state && i != NFA2.states.size() && i != end.state)
+                if (state.state != start.state && state.state != end.state)
                 {
-                    NFA.states[i + NFA1.states.size()] = NFA2.states[i];
+                    NFA.states.push_back(state);
                 }
             }
 
+            NFA.states.push_back(end); 
             NFA.initialState = start.state;
             
             // push to stack
+            nfaStack.push(NFA);
+        }
+
+        else if (c == '*')
+        {
+            if (nfaStack.empty())
+                throw runtime_error("Invalid regular expression");
+            
+            nfa NFA = nfaStack.top();
+            nfaStack.pop();
+
+            // connect last state to first state
+            for (nfaNode &node : NFA.states)
+            {
+                if (node.acceptance)
+                {
+                    node.acceptance = false;
+                    node.transition['e'].insert(NFA.initialState);
+                }
+            }
+
+            // make start state as acceptance state
+            NFA.states[NFA.initialState].acceptance = true;
+
             nfaStack.push(NFA);
         }
 
@@ -189,102 +351,20 @@ nfa regexToNFA(string regex)
         {
             if (nfaStack.empty())
                 throw runtime_error("Invalid regular expression");
-
-            nfa NFA = nfaStack.top();
-            nfaStack.pop();
-
-            // create two states
-            nfaNode start;
-            start.state = stateCounter++;
-            start.acceptance = false;
-
-            nfaNode end;
-            end.state = stateCounter++;
-            end.acceptance = true;
-
-            // join new start state to initial state of NFA popped
-            start.transition['e'].insert(NFA.initialState);
-
-            // join final states of NFA to end state
-            for (nfaNode &node : NFA.states)
-            {
-                if (node.acceptance)
-                {
-                    node.acceptance = false;
-                    node.transition['e'].insert(end.state);
-                    node.transition['e'].insert(NFA.initialState);
-                }
-            }
-
-            // final NFA
-            nfa newNFA(NFA.states.size() + 2, start.state);
-            newNFA.states[start.state] = start;
-            newNFA.states[end.state] = end;
-            // copy(NFA.states.begin(), NFA.states.end(), newNFA.states.begin() + 1);
-
-            for (int i = 0; i < NFA.states.size(); i++)
-            {
-                if (i != start.state && i != end.state)
-                {
-                    newNFA.states[i] = NFA.states[i];
-                }
-            }
-
-            newNFA.initialState = start.state;
-
-            // push to stack
-            nfaStack.push(newNFA);
-        }
-
-        else if (c == '*')
-        {
-            if (nfaStack.empty())
-                throw runtime_error("Invalid regular expression");
-
-            nfa NFA = nfaStack.top();
-            nfaStack.pop();
-
-            // create two states
-            nfaNode start;
-            start.state = stateCounter++;
-            start.acceptance = false;
-
-            nfaNode end;
-            end.state = stateCounter++;
-            end.acceptance = true;
-
-            // join new start state to initial state of NFA popped
-            start.transition['e'].insert(NFA.initialState);
-            start.transition['e'].insert(end.state);
-
-            // join final states of NFA to end state
-            for (nfaNode &node : NFA.states)
-            {
-                if (node.acceptance)
-                {
-                    node.acceptance = false;
-                    node.transition['e'].insert(end.state);
-                    node.transition['e'].insert(NFA.initialState);
-                }
-            }
-
-            // final NFA
-            nfa newNFA(NFA.states.size() + 2, start.state);
-            newNFA.states[start.state] = start;
-            newNFA.states[end.state] = end;
             
-            for (int i = 0; i < NFA.states.size(); i++)
+            nfa NFA = nfaStack.top();
+            nfaStack.pop();
+
+            // connect last state to first state
+            for (nfaNode &node : NFA.states)
             {
-                if (i != start.state && i != end.state)
+                if (node.acceptance)
                 {
-                    newNFA.states[i] = NFA.states[i];
+                    node.transition['e'].insert(NFA.initialState);
                 }
             }
 
-            newNFA.initialState = start.state;
-
-            // push to stack
-            nfaStack.push(newNFA);
+            nfaStack.push(NFA);
         }
 
         else if (c == '?')
@@ -295,25 +375,31 @@ nfa regexToNFA(string regex)
             nfa NFA = nfaStack.top();
             nfaStack.pop();
 
-            // Create a new end state
-            nfaNode newEnd;
-            newEnd.state = stateCounter++;
-            newEnd.acceptance = true;
+            // push an end state
+            nfaNode end;
+            end.state = stateCounter++;
 
             // Add an epsilon transition from the start state to the new end state
-            NFA.states.push_back(newEnd);
-            NFA.states[NFA.initialState].transition['e'].insert(newEnd.state);
+            int x = NFA.initialState;
 
-            // Add an epsilon transition from the old end state to the new end state
+            // define the transition here only
             for (nfaNode &node : NFA.states)
             {
                 if (node.acceptance)
                 {
-                    node.transition['e'].insert(newEnd.state);
-                    node.acceptance = false;  
+                    node.acceptance = false;
+                    node.transition['e'].insert(end.state);
+                }
+
+                else if (node.state == x)
+                {
+                    node.transition['e'].insert(end.state);
                 }
             }
-    
+
+            end.acceptance = true;
+            NFA.states.push_back(end);
+
             nfaStack.push(NFA);
         }
     }
@@ -323,11 +409,11 @@ nfa regexToNFA(string regex)
 
 int main() 
 {
-    // bab.|+bab.|*a.|
-    string regex = "abb?";
+    // a*b.a*ba*...*
+    string regex = "a*b.a*ba*...*";
     nfa result = regexToNFA(regex);
 
-    for (nfaNode &node : result.states)  // Use references here
+    for (nfaNode &node : result.states)
     {
         if (node.state == result.initialState)
             cout << "Start State: " << node.state << endl;
