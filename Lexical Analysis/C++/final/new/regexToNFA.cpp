@@ -4,6 +4,7 @@ using namespace std;
 
 string r,w;
 int finalStateENFA;
+set <int> finalStatesNFA;
 FILE* outputfile;
 
 // function to get eNFA from given regex
@@ -336,16 +337,16 @@ vector <vector <int>> generateNFA(string r)
 }
 
 // get epsilon closure
-vector <int> epclosure(vector <vector <int>> nfa, int state)
+set <int> epclosure(vector <vector <int>> nfa, int state)
 {
-    vector <int> closure;
-    stack <int> st;
+    set <int> closure;
+    queue <int> st;
     st.push(state);
-    closure.push_back(state);
+    closure.insert(state);
 
     while (!st.empty())
     {
-        int top = st.top(); st.pop();
+        int top = st.front(); st.pop();
 
         for (int i = 0; i < nfa.size(); i++)
         {
@@ -353,7 +354,7 @@ vector <int> epclosure(vector <vector <int>> nfa, int state)
             {
                 if (find(closure.begin(), closure.end(), nfa[i][2]) == closure.end())
                 {
-                    closure.push_back(nfa[i][2]);
+                    closure.insert(nfa[i][2]);
                     st.push(nfa[i][2]);
                 }
             }
@@ -361,6 +362,73 @@ vector <int> epclosure(vector <vector <int>> nfa, int state)
     }
 
     return closure;
+}
+
+vector<vector<int>> enfaToNFA(vector<vector<int>> enfa)
+{
+    vector<vector<int>> nfa;
+    map<set<int>, int> stateIndex;
+    queue<set<int>> q;
+
+    // Calculate the epsilon closure for each state and store it in a map
+    map<int, set<int>> epsilonClosures;
+    for (int i = 0; i < enfa.size(); i++)
+    {
+        epsilonClosures[i] = epclosure(enfa, i);
+    }
+
+    // Start with the epsilon closure of the start state
+    set<int> startState = epsilonClosures[0];
+    q.push(startState);
+    stateIndex[startState] = 0;
+
+    // Check if the start state should also be a final state
+    if (startState.find(finalStateENFA) != startState.end())
+    {
+        finalStatesNFA.insert(0);
+    }
+
+    while (!q.empty())
+    {
+        set<int> currentState = q.front(); q.pop();
+        for (int i = 0; i < 2; i++)
+        {
+            set<int> newState;
+            for (int state : currentState)
+            {
+                // Check the transitions by the epsilon closure, the given input, and then the epsilon closure again
+                for (int j = 0; j < enfa.size(); j++)
+                {
+                    if (enfa[j][0] == state && enfa[j][1] == i)
+                    {
+                        set<int> temp = epsilonClosures[enfa[j][2]];
+                        newState.insert(temp.begin(), temp.end());
+                    }
+                }
+            }
+
+            if (newState.empty())
+                continue;
+
+            if (stateIndex.find(newState) == stateIndex.end())
+            {
+                stateIndex[newState] = stateIndex.size();
+                q.push(newState);
+            }
+
+            if (newState.find(finalStateENFA) != newState.end())
+            {
+                finalStatesNFA.insert(stateIndex[newState]);
+            }
+
+            vector<int> transition;
+            transition.push_back(stateIndex[currentState]);
+            transition.push_back(i);
+            transition.push_back(stateIndex[newState]);
+            nfa.push_back(transition);
+        }
+    }
+    return nfa;
 }
 
 int main()
@@ -371,6 +439,7 @@ int main()
     vector <int> finalStatesEpsilonNFA = {finalStateENFA};
     
     // print the nfa
+    std::cout << "eNFA" << endl;
     for (int i = 0; i < nfa.size(); i++)
     {
         char symbol;
@@ -384,20 +453,31 @@ int main()
         else
             symbol = 'e';
 
-        cout << "State " << nfa[i][0] << "-> " << symbol << " " << "State " << nfa[i][2] << endl;
+        std::cout << "State " << nfa[i][0] << "-> " << symbol << " " << "State " << nfa[i][2] << endl;
     }
 
-    cout << "Final state: " << finalStateENFA << endl;
-
-    // print the epsilon closure of all states
-    for (int i = 0; i < finalStateENFA; i++)
+    vector <vector <int>> newNFA = enfaToNFA(nfa);
+    std::cout << "NFA" << endl;
+    for (int i = 0; i < newNFA.size(); i++)
     {
-        vector <int> closure = epclosure(nfa, i);
-        cout << "Epsilon closure of state " << i << ": ";
-        for (int j = 0; j < closure.size(); j++)
-            cout << closure[j] << " ";
-        cout << endl;
+        char symbol;
+        if (newNFA[i][1] == 0)
+            symbol = 'b';
+
+        else if (newNFA[i][1] == 1)
+            symbol = 'a';
+
+        else
+            symbol = 'e';
+        std::cout << "State " << newNFA[i][0] << "-> " << symbol << " " << "State " << newNFA[i][2] << endl;
+    }
+
+    // print final states
+    std::cout << "Final States: ";
+    for (int state : finalStatesNFA)
+    {
+        std::cout << state << " ";
     }
 }
 
-// (((((a)*)(b))(((a)*)((b)((a)*))))*)
+// ((((a)(a))+)(b))
