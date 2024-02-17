@@ -127,7 +127,7 @@ vector <vector <int>> generateNFA(string r)
                 if(nfaTrans[j][0]==ss && nfaTrans[j][1]==2)
                     ss=nfaTrans[j][2];
 
-            sTrans.push_back(endState);
+            sTrans.push_back(endState - 1);
             sTrans.push_back(2);
             sTrans.push_back(ss);
             sTrans.push_back(-111);
@@ -135,7 +135,7 @@ vector <vector <int>> generateNFA(string r)
             sTrans.clear();
             sTrans.push_back(ss);
             sTrans.push_back(2);
-            sTrans.push_back(endState);
+            sTrans.push_back(endState - 1);
             sTrans.push_back(-111);
             nfaTrans.push_back(sTrans);
         }
@@ -153,7 +153,7 @@ vector <vector <int>> generateNFA(string r)
                     ss=nfaTrans[j][0];
             }
 
-            while(currexp.size()  != 0)
+            while(currexp.size() != 0)
             {
                 if(r[it] == 'a')
                 {
@@ -197,7 +197,7 @@ vector <vector <int>> generateNFA(string r)
                 if(nfaTrans[j][0]==ss && nfaTrans[j][1]==2)
                     ss=nfaTrans[j][2];
             
-            pTrans.push_back(endState);
+            pTrans.push_back(endState - 1);
             pTrans.push_back(2);
             pTrans.push_back(ss);
             pTrans.push_back(-999);
@@ -339,6 +339,19 @@ vector <vector <int>> generateNFA(string r)
 // get epsilon closure
 set <int> epclosure(vector <vector <int>> nfa, int state)
 {
+    bool stateExists = false;
+    for (int i = 0; i < nfa.size(); i++)
+    {
+        if (nfa[i][0] == state)
+        {
+            stateExists = true;
+            break;
+        }
+    }
+    if (!stateExists)
+    {
+        return {state};
+    }
     set <int> closure;
     queue <int> st;
     st.push(state);
@@ -368,17 +381,10 @@ vector<vector<int>> enfaToNFA(vector<vector<int>> enfa)
 {
     vector<vector<int>> nfa;
     map<set<int>, int> stateIndex;
-    queue<set<int>> q;
-
-    // Calculate the epsilon closure for each state and store it in a map
-    map<int, set<int>> epsilonClosures;
-    for (int i = 0; i < enfa.size(); i++)
-    {
-        epsilonClosures[i] = epclosure(enfa, i);
-    }
+    stack<set<int>> q;
 
     // Start with the epsilon closure of the start state
-    set<int> startState = epsilonClosures[0];
+    set<int> startState = epclosure(enfa, 0);
     q.push(startState);
     stateIndex[startState] = 0;
 
@@ -390,7 +396,7 @@ vector<vector<int>> enfaToNFA(vector<vector<int>> enfa)
 
     while (!q.empty())
     {
-        set<int> currentState = q.front(); q.pop();
+        set<int> currentState = q.top(); q.pop();
         for (int i = 0; i < 2; i++)
         {
             set<int> newState;
@@ -401,7 +407,7 @@ vector<vector<int>> enfaToNFA(vector<vector<int>> enfa)
                 {
                     if (enfa[j][0] == state && enfa[j][1] == i)
                     {
-                        set<int> temp = epsilonClosures[enfa[j][2]];
+                        set<int> temp = epclosure(enfa, enfa[j][2]);
                         newState.insert(temp.begin(), temp.end());
                     }
                 }
@@ -430,7 +436,6 @@ vector<vector<int>> enfaToNFA(vector<vector<int>> enfa)
     }
     return nfa;
 }
-
 int main()
 {
     string s;
@@ -456,6 +461,10 @@ int main()
         std::cout << "State " << nfa[i][0] << "-> " << symbol << " " << "State " << nfa[i][2] << endl;
     }
 
+    // print final states
+    std::cout << "Final States: ";
+    cout << finalStateENFA << endl;
+
     vector <vector <int>> newNFA = enfaToNFA(nfa);
     std::cout << "NFA" << endl;
     for (int i = 0; i < newNFA.size(); i++)
@@ -478,6 +487,19 @@ int main()
     {
         std::cout << state << " ";
     }
+
+    // print epsilon closure of eNFA states
+    std::cout << "Epsilon Closure of eNFA states" << endl;
+    for (auto state : nfa)
+    {
+        std::cout << "State " << state[0] << ": ";
+        set <int> closure = epclosure(nfa, state[0]);
+        for (auto state : closure)
+        {
+            std::cout << state << " ";
+        }
+        std::cout << endl;
+    }
 }
 
-// ((((a)(a))+)(b))
+// ((((b)|((a)(b)))+)|((((b)|((a)(b)))*)))
