@@ -156,12 +156,12 @@ nfa regexToNFA(string s)
             nfa NFA;
             NFA.initialState = counter++;
 
-            // connect it to start states of second and first
-            NFA.transition[NFA.initialState].insert({'e', {first.initialState, second.initialState}});
-
             // make the new end state
             int end = counter++;
             NFA.finalStates = {end};
+
+            // connect it to start states of second and first
+            NFA.transition[NFA.initialState].insert({'e', {first.initialState, second.initialState}});
 
             // connect end states of first and second to this new end
             for (int state : first.finalStates)
@@ -170,12 +170,22 @@ nfa regexToNFA(string s)
             for (int state : second.finalStates)
                 NFA.transition[state].insert({'e', NFA.finalStates});
 
-            // add remanining states of first and second to NFA
-            for (auto it : first.transition)
-                NFA.transition.insert(it);
+            // add remaining states of first and second to NFA, including epsilon transitions
+            for (auto &it : first.transition)
+            {
+                for (auto &trans : it.second)
+                {
+                    NFA.transition[it.first][trans.first].insert(trans.second.begin(), trans.second.end());
+                }
+            }
 
-            for (auto it : second.transition)
-                NFA.transition.insert(it);
+            for (auto &it : second.transition)
+            {
+                for (auto &trans : it.second)
+                {
+                    NFA.transition[it.first][trans.first].insert(trans.second.begin(), trans.second.end());
+                }
+            }
 
             // push it to stack
             nfaStack.push(NFA);
@@ -189,6 +199,8 @@ nfa regexToNFA(string s)
 
             // make a new start and a new NFA
             nfa NFA;
+
+            // make the new start and end states
             NFA.initialState = first.initialState;
             for (int state : second.finalStates)
                 NFA.finalStates.insert(state);
@@ -197,12 +209,22 @@ nfa regexToNFA(string s)
             for (int state : first.finalStates)
                 NFA.transition[state].insert({'e', {second.initialState}});
 
-            // add remanining states of first ans state to NFA
-            for (auto it : first.transition)
-                NFA.transition.insert(it);
+            // add remaining states of first and second to NFA, including epsilon transitions
+            for (auto &it : first.transition)
+            {
+                for (auto &trans : it.second)
+                {
+                    NFA.transition[it.first][trans.first].insert(trans.second.begin(), trans.second.end());
+                }
+            }
 
-            for (auto it : second.transition)
-                NFA.transition.insert(it);
+            for (auto &it : second.transition)
+            {
+                for (auto &trans : it.second)
+                {
+                    NFA.transition[it.first][trans.first].insert(trans.second.begin(), trans.second.end());
+                }
+            }
 
             // push it to stack
             nfaStack.push(NFA);
@@ -246,15 +268,12 @@ nfa regexToNFA(string s)
         {
             // pop the last state
             nfa last = nfaStack.top(); nfaStack.pop();
-
-            // make a new NFA
-            nfa NFA = last;
-
-            // make epsilon from start to end
-            NFA.transition[NFA.initialState].insert({'e', NFA.finalStates});
+            
+            // make epsilon from new first state to end of last
+            last.transition[last.initialState]['e'].insert(last.finalStates.begin(), last.finalStates.end());
 
             // push it to stack
-            nfaStack.push(NFA);
+            nfaStack.push(last);
         }
     }
 
@@ -263,7 +282,9 @@ nfa regexToNFA(string s)
 
 int main() 
 {
-    nfa answer = regexToNFA("(((a)+)|(b))");
+    string s;
+    cin >> s;
+    nfa answer = regexToNFA(s);
     for (auto it : answer.transition)
     {
         for (auto xt : it.second)
