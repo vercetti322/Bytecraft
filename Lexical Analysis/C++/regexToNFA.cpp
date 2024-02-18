@@ -161,18 +161,29 @@ nfa regexToNFA(string s)
             NFA.finalStates = {end};
 
             // connect it to start states of second and first
-            NFA.transition[NFA.initialState].insert({'e', {first.initialState, second.initialState}});
+            NFA.transition[NFA.initialState] = {{'e', {first.initialState, second.initialState}}};
 
             // connect end states of first and second to this new end
             for (int state : first.finalStates)
-                NFA.transition[state].insert({'e', NFA.finalStates});
+            {
+                if (NFA.transition.find(state) == NFA.transition.end())
+                    NFA.transition[state] = {{'e', {end}}};
+                else
+                    NFA.transition[state]['e'].insert(end);
+            }
             
             for (int state : second.finalStates)
-                NFA.transition[state].insert({'e', NFA.finalStates});
+            {
+                if (NFA.transition.find(state) == NFA.transition.end())
+                    NFA.transition[state] = {{'e', {end}}};
+                else
+                    NFA.transition[state]['e'].insert(end);
+            }
 
             // add remaining states of first and second to NFA, including epsilon transitions
             for (auto &it : first.transition)
             {
+
                 for (auto &trans : it.second)
                 {
                     NFA.transition[it.first][trans.first].insert(trans.second.begin(), trans.second.end());
@@ -202,12 +213,7 @@ nfa regexToNFA(string s)
 
             // make the new start and end states
             NFA.initialState = first.initialState;
-            for (int state : second.finalStates)
-                NFA.finalStates.insert(state);
-
-            // connect last states of first to start state of second
-            for (int state : first.finalStates)
-                NFA.transition[state].insert({'e', {second.initialState}});
+            NFA.finalStates = second.finalStates;
 
             // add remaining states of first and second to NFA, including epsilon transitions
             for (auto &it : first.transition)
@@ -226,6 +232,12 @@ nfa regexToNFA(string s)
                 }
             }
 
+            // connect last states of first to start state of second
+            for (int state : first.finalStates)
+            {
+                NFA.transition[state]['e'].insert(second.initialState);
+            }
+
             // push it to stack
             nfaStack.push(NFA);
         }
@@ -235,17 +247,15 @@ nfa regexToNFA(string s)
             // pop the last state
             nfa last = nfaStack.top(); nfaStack.pop();
 
-            // make a new NFA
-            nfa NFA = last;
+            // from end state to start state
+            for (int x : last.finalStates)
+            {
+                last.transition[x]['e'].insert(last.initialState);
+            }
 
-            // from end to start
-            for (int state : NFA.finalStates)
-                NFA.transition[state].insert({'e', {NFA.initialState}});
-
-            // from start to end
-            NFA.transition[NFA.initialState].insert({'e', NFA.finalStates});
-
-            nfaStack.push(NFA);
+            // make epsilon from new first state to end of last
+            last.transition[last.initialState]['e'].insert(last.finalStates.begin(), last.finalStates.end());
+            nfaStack.push(last);
         }
 
         else if (c == '+')
@@ -253,22 +263,21 @@ nfa regexToNFA(string s)
             // pop the last state
             nfa last = nfaStack.top(); nfaStack.pop();
 
-            // make a new NFA
-            nfa NFA = last;
-
             // make epsilon from end of last to new first state
             for (int x : last.finalStates)
-                NFA.transition[x].insert({'e', {NFA.initialState}});
+            {
+                last.transition[x]['e'].insert(last.initialState);
+            }
             
             // push it to stack
-            nfaStack.push(NFA);
+            nfaStack.push(last);
         }
 
         else if (c == '?')
         {
             // pop the last state
             nfa last = nfaStack.top(); nfaStack.pop();
-            
+
             // make epsilon from new first state to end of last
             last.transition[last.initialState]['e'].insert(last.finalStates.begin(), last.finalStates.end());
 
