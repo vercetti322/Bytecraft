@@ -105,7 +105,7 @@ string infixToPostfix(string& infix)
 
 int main() 
 {
-    string infixExpression = insertConcat("(((((a)*)(b))(((a)*)((b)((a)*))))*)");
+    string infixExpression = insertConcat("((b)|((a)+))");
     cout << infixExpression << endl;
     string postfixExpression = infixToPostfix(infixExpression);
     cout << "Postfix expression: " << postfixExpression << std::endl;

@@ -15,9 +15,54 @@ struct nfa
 struct dfa
 {
     set <int> initialStates;
-    map <int, map <char, int>> transition; // state --> symbol --> next state
+    mutable map <int, map <char, int>> transition; // state --> symbol --> next state
     set <int> finalStates;
 };
+
+// store input.txt
+struct input
+{
+    string str;
+    vector <string> regex;
+};
+
+// take input
+// Function to read input from a file
+vector <input> readInputFromFile(const std::string& filename)
+{
+    vector <input> inputs;
+
+    // Open the input file
+    std::ifstream file(filename);
+    if (!file.is_open()) 
+    {
+        // Failed to open file
+        std::cerr << "Error: Unable to open file " << filename << std::endl;
+        return inputs; // Return empty vector
+    }
+
+    // Read the first line containing the string
+    string str;
+    if (std::getline(file, str))
+    {
+        input inp;
+        inp.str = str;
+
+        // Read the remaining lines containing regexes
+        std::string regex;
+        while (std::getline(file, regex)) {
+            inp.regex.push_back(regex);
+        }
+
+        // Add the input to the vector
+        inputs.push_back(inp);
+    }
+
+    // Close the file
+    file.close();
+    return inputs;
+}
+
 
 // convert to postfix
 string insertConcat(string s)
@@ -32,7 +77,6 @@ string insertConcat(string s)
 
     return result;
 }
-
 
 // a character is an operator or not
 bool isOperator(char c) 
@@ -454,7 +498,6 @@ void removeUnreachableStates(nfa& nfa)
     }
 }
 
-
 // convert nfa to dfa
 dfa nfaToDFA(const nfa& NFA, const nfa& eNFA)
 {
@@ -520,59 +563,42 @@ dfa nfaToDFA(const nfa& NFA, const nfa& eNFA)
     return dfa;
 }
 
+// get largest prefix accepted by dfa from input string starting from some index
+string getLargestPrefix(const dfa& dfa, const string& input, int index)
+{
+    int currentState = 0;
+    int lastAcceptingState = -1;
+    int lastAcceptingIndex = -1;
+
+    for (int i = index; i < input.size(); ++i)
+    {
+        char symbol = input[i];
+        auto it = dfa.transition[currentState].find(symbol);
+        if (it == dfa.transition[currentState].end())
+            break;
+
+        currentState = it->second;
+        if (dfa.finalStates.find(currentState) != dfa.finalStates.end())
+        {
+            lastAcceptingState = currentState;
+            lastAcceptingIndex = i;
+        }
+    }
+
+    if (lastAcceptingState != -1)
+    {
+        return input.substr(index, lastAcceptingIndex - index + 1);
+    }
+    else
+    {
+        return "";
+    }
+}
+
 
 int main() 
 {
-    string s;
-    cin >> s;
-    nfa answer = regexToNFA(s);
-    // for (auto it : answer.transition)
-    // {
-    //     for (auto xt : it.second)
-    //     {
-    //         cout << it.first << "-> ";
-    //         cout << xt.first << ": {";
-    //         for (int state : xt.second)
-    //             cout << state << ",";
-    //         cout << "}" << endl;
-    //     }
-    //     cout << endl;
-    // }
-
-    // cout << "initial: " << answer.initialState << endl;
-    // cout << "final: ";
-    // for (int state : answer.finalStates)
-    //     cout << state << " ";
-    // cout << endl;
-
-    // convert to nfa
-    nfa NFA = eNFAToNFA(answer);
-    removeUnreachableStates(NFA);
     
-    // convert to dfa
-    dfa DFA = nfaToDFA(NFA, answer);
 
-    // print dfa
-    for (auto it : DFA.transition)
-    {
-        for (auto xt : it.second)
-        {
-            cout << it.first << "-> ";
-            cout << xt.first << ": ";
-            cout << xt.second << endl;
-        }
-        cout << endl;
-    }
-
-    cout << "initial: ";
-    for (int state : DFA.initialStates)
-        cout << state << " ";
-
-    cout << endl;
-
-    cout << "final: ";
-
-    for (int state : DFA.finalStates)
-        cout << state << " ";
-    cout << endl;
+    return 0;
 }
