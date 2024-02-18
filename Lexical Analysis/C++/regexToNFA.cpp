@@ -26,7 +26,6 @@ struct input
     vector <string> regex;
 };
 
-// take input
 // Function to read input from a file
 vector <input> readInputFromFile(const std::string& filename)
 {
@@ -575,9 +574,12 @@ string getLargestPrefix(const dfa& dfa, const string& input, int index)
         char symbol = input[i];
         auto it = dfa.transition[currentState].find(symbol);
         if (it == dfa.transition[currentState].end())
+        {
             break;
+        }
 
         currentState = it->second;
+
         if (dfa.finalStates.find(currentState) != dfa.finalStates.end())
         {
             lastAcceptingState = currentState;
@@ -598,7 +600,91 @@ string getLargestPrefix(const dfa& dfa, const string& input, int index)
 
 int main() 
 {
-    
+    std::vector<input> inputs = readInputFromFile("input.txt");
+    if (inputs.empty()) {
+        return 1;
+    }
+
+    // print input from file
+    for (const input& inp : inputs)
+    {
+        cout << "String: " << inp.str << endl;
+        for (const std::string& regex : inp.regex)
+        {
+            cout << regex << endl;
+        }
+    }
+
+    /*
+        iterate over the input string, start from first index
+        and keep finding the maximum of largest prefix accepted by regexes given
+        and then move to the next index, if the prefix is empty, move to the next index
+        and if the prefix is not empty, move to the next index after the prefix and if
+        multiple regexes accept the same length prefix, choose the one which comes first
+        and if no regex accepts the prefix, move to the next index
+    */
+    vector <dfa> dfas;
+    for (const std::string& regex : inputs[0].regex)
+    {
+        nfa eNFA = regexToNFA(regex);
+        nfa NFA = eNFAToNFA(eNFA);
+        removeUnreachableStates(NFA);
+        dfa DFA = nfaToDFA(NFA, eNFA);
+        dfas.push_back(DFA);
+    }
+            
+    for (const input& inp : inputs)
+    {
+        // Iterate over the input string
+        std::string input = inp.str;
+        int index = 0;
+        while (index < input.size() && index >= 0)
+        {
+            cout << "Index: " << index << endl;
+            std::string largestPrefix;
+            int regexIndex = -1;
+
+            // Find the largest prefix accepted by the regexes
+            for (int i = 0; i < dfas.size(); ++i)
+            {
+                std::string prefix = getLargestPrefix(dfas[i], input, index);
+                if (prefix.size() > largestPrefix.size())
+                {
+                    largestPrefix = prefix;
+                    regexIndex = i;
+                }
+            }
+
+            // Update the index
+            if (largestPrefix.empty())
+                ++index;
+            else
+                index += largestPrefix.size();
+
+            std::ofstream file("output.txt", std::ios::app);
+            if (file.is_open())
+            {
+                if (largestPrefix.empty())
+                {
+                    // output the string at the index
+                    file << "<" << input[index] << "," << 0 << ">";
+                }
+                else
+                {
+                    // Output the largest prefix accepted by the regex
+                    file << "<" << largestPrefix << "," << regexIndex + 1 << ">";
+                }
+
+                file.close();
+            }
+            
+            else
+            {
+                std::cerr << "Error: Unable to open file output.txt" << std::endl;
+                return 1;
+            }
+        }
+    }
 
     return 0;
 }
