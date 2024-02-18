@@ -632,7 +632,7 @@ int main()
         dfa DFA = nfaToDFA(NFA, eNFA);
         dfas.push_back(DFA);
     }
-            
+        
     for (const input& inp : inputs)
     {
         // Iterate over the input string
@@ -648,7 +648,8 @@ int main()
             for (int i = 0; i < dfas.size(); ++i)
             {
                 std::string prefix = getLargestPrefix(dfas[i], input, index);
-                if (prefix.size() > largestPrefix.size())
+                if (prefix.size() > largestPrefix.size() || 
+        (prefix.size() == largestPrefix.size() && i > regexIndex))
                 {
                     largestPrefix = prefix;
                     regexIndex = i;
@@ -664,10 +665,10 @@ int main()
             std::ofstream file("output.txt", std::ios::app);
             if (file.is_open())
             {
-                if (largestPrefix.empty())
+                if (largestPrefix.empty() && index <= input.size())
                 {
                     // output the string at the index
-                    file << "<" << input[index] << "," << 0 << ">";
+                    file << "<" << input[index - 1] << "," << 0 << ">";
                 }
                 else
                 {
@@ -677,7 +678,7 @@ int main()
 
                 file.close();
             }
-            
+
             else
             {
                 std::cerr << "Error: Unable to open file output.txt" << std::endl;
