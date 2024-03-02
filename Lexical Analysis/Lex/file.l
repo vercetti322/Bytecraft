@@ -3,6 +3,7 @@
     #include <stdlib.h>
     #include <ctype.h>
     #include <string.h>
+    #include <stdbool.h>
 
     typedef struct Record
     {
@@ -17,6 +18,7 @@
     int buffer_index = 0;
     int type = 0;
     int course_index = 0;
+    bool course_found = false;
 %}
 
 %x UPPER
@@ -35,6 +37,7 @@
     buffer_index = 0;
     type = 0;
     course_index = 0;
+    course_found = false;
 }
 
 <UPPER>[A-Z] {
@@ -96,11 +99,28 @@
 
 <DIGIT>[A-Z]|\n {
     if (type == 0)
+    {
         record.studID[0] = '\0';
+        printf("\nwrong ID!\n");
+        BEGIN(INITIAL);
+    }
+
     else
+    {
         record.course[course_index][0] = '\0';
-    printf("\nwrong ID!\n");
-    BEGIN(INITIAL);
+        printf("\nwrong ID!\n");
+        while (input() != '<') 
+        {
+            if (input() == YY_NULL)
+            {
+                BEGIN(INITIAL);
+                break;
+            }
+        }
+
+        unput('<');
+        BEGIN(GREATER_THAN);
+    }
 }
 
 <DIGIT>[0-9] {
@@ -161,8 +181,6 @@
 }
 
 <GREATER_THAN>.|\n {
-    if (course_index == 0)
-        record.studID[0] = '\0';
     record.course[course_index][0] = '\0';
     printf("\nno course info found 1!\n");
     BEGIN(INITIAL);
@@ -173,13 +191,28 @@
         record.course[course_index][buffer_index++] = yytext[i];
     }
 
+    course_found = true;
     BEGIN(LESSER_THAN);
 }
 
 <CREDS>. {
     printf("\nwrong course info found 2!\n");
-    if (course_index == 0)
-        record.studID[0] = '\0';
+    record.course[course_index][0] = '\0';
+    while (input() != '<') 
+    {
+        if (input() == YY_NULL)
+        {
+            BEGIN(INITIAL);
+            break;
+        }
+    }
+    unput('<');
+    BEGIN(GREATER_THAN);
+}
+
+<CREDS>\n {
+    printf("\nwrong course info found 2!\n");
+    record.studID[0] = '\0';
     record.course[course_index][0] = '\0';
     BEGIN(INITIAL);
 }
@@ -193,6 +226,8 @@
 
 <LESSER_THAN>[ ]*[>]\n {
     printf("\ncompleted record\n");
+    if (course_found)
+        record.studID[0] = '\0';
     ++course_index;
     BEGIN(INITIAL);
 }
