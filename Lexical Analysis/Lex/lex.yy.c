@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 10
-#define YY_END_OF_BUFFER 11
+#define YY_NUM_RULES 14
+#define YY_END_OF_BUFFER 15
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -360,10 +360,12 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[21] =
+static const flex_int16_t yy_accept[41] =
     {   0,
-        0,    0,    0,    0,    0,    0,   11,    1,    2,    5,
-        4,    3,    9,    8,    8,    7,    6,    1,    2,    0
+        0,    0,    0,    0,    8,    8,    0,    0,    0,    0,
+        0,    0,   15,    1,    2,    5,    4,    3,   14,    8,
+        7,    6,   10,    9,   14,   13,   12,   12,    1,    2,
+        8,    9,    0,   13,    0,   11,   11,   11,   11,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -372,11 +374,11 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    3,    1,    1,    1,    4,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    5,    5,    5,
-        5,    5,    5,    5,    5,    5,    5,    1,    1,    1,
-        1,    1,    1,    1,    6,    6,    6,    6,    6,    6,
-        6,    6,    6,    6,    6,    6,    6,    6,    6,    6,
-        6,    6,    6,    6,    6,    6,    6,    6,    6,    6,
+        1,    1,    1,    1,    5,    1,    1,    6,    6,    7,
+        7,    7,    6,    6,    6,    6,    6,    1,    1,    8,
+        1,    9,    1,    1,   10,   11,   12,   13,   13,   13,
+       13,   13,   13,   13,   13,   13,   13,   13,   13,   13,
+       13,   13,   13,   13,   13,   13,   13,   13,   13,   13,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
 
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -398,37 +400,58 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[7] =
+static const YY_CHAR yy_meta[14] =
     {   0,
-        1,    1,    2,    3,    1,    1
+        1,    1,    1,    2,    1,    1,    1,    1,    1,    1,
+        1,    1,    1
     } ;
 
-static const flex_int16_t yy_base[24] =
+static const flex_int16_t yy_base[46] =
     {   0,
-       17,   16,    0,    0,    6,    0,   19,    0,    0,   22,
-       22,   22,   22,   22,   22,   22,   22,    0,    0,   22,
-       12,   15,   16
+       40,   39,    0,    0,   13,    0,   25,   32,   38,   45,
+       53,   59,   42,    0,   36,   85,   85,   85,   85,   35,
+       85,   85,   85,   34,   64,   85,   85,   33,    0,   32,
+       29,   28,    0,   85,   64,   25,   24,   85,   85,   85,
+       76,   78,   80,   82,   27
     } ;
 
-static const flex_int16_t yy_def[24] =
+static const flex_int16_t yy_def[46] =
     {   0,
-       21,   21,   20,    3,   20,    5,   20,   22,   23,   20,
-       20,   20,   20,   20,   20,   20,   20,   22,   23,    0,
-       20,   20,   20
+       41,   41,   40,    3,   40,    5,   42,   42,   43,   43,
+       44,   44,   40,   45,   40,   40,   40,   40,   40,   40,
+       40,   40,   40,   40,   40,   40,   40,   40,   45,   40,
+       40,   40,   25,   40,   40,   40,   40,   40,   40,    0,
+       40,   40,   40,   40,   40
     } ;
 
-static const flex_int16_t yy_nxt[29] =
+static const flex_int16_t yy_nxt[99] =
     {   0,
-       10,   10,   10,   10,   11,   12,   13,   14,   15,   13,
-       16,   17,    8,    8,    8,   18,   18,   19,   20,    9,
-        9,    7,   20,   20,   20,   20,   20,   20
+       16,   16,   16,   16,   16,   17,   17,   16,   16,   18,
+       18,   18,   18,   19,   19,   20,   19,   19,   21,   21,
+       19,   19,   22,   22,   22,   22,   19,   29,   39,   38,
+       32,   31,   24,   19,   30,   35,   32,   31,   30,   24,
+       25,   40,   15,   15,   40,   40,   26,   25,   40,   40,
+       40,   40,   40,   26,   19,   40,   40,   40,   40,   28,
+       19,   40,   40,   40,   40,   28,   33,   40,   40,   40,
+       40,   40,   34,   36,   37,   38,   14,   14,   23,   23,
+       19,   19,   27,   27,   13,   40,   40,   40,   40,   40,
+       40,   40,   40,   40,   40,   40,   40,   40
+
     } ;
 
-static const flex_int16_t yy_chk[29] =
+static const flex_int16_t yy_chk[99] =
     {   0,
-        3,    3,    3,    3,    3,    3,    5,    5,    5,    5,
-        5,    5,   21,   21,   21,   22,   22,   23,    7,    2,
-        1,   20,   20,   20,   20,   20,   20,   20
+        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+        3,    3,    3,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    7,   45,   37,   36,
+       32,   31,    7,    8,   30,   28,   24,   20,   15,    8,
+        9,   13,    2,    1,    0,    0,    9,   10,    0,    0,
+        0,    0,    0,   10,   11,    0,    0,    0,    0,   11,
+       12,    0,    0,    0,    0,   12,   25,    0,    0,    0,
+        0,    0,   25,   35,   35,   35,   41,   41,   42,   42,
+       43,   43,   44,   44,   40,   40,   40,   40,   40,   40,
+       40,   40,   40,   40,   40,   40,   40,   40
+
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -451,23 +474,29 @@ char *yytext;
     #include <stdlib.h>
     #include <ctype.h>
     #include <string.h>
-    typedef struct studID 
-    {
-        int total_count;
-        int max_length;
-        int upper_count;
-        char recordBuffer[30]; // Adjust the size as needed
-        int bufferIndex;
-    }StudID;
-    
-    StudID studID = {0, 30, 0, {0}, 0};
-#line 465 "lex.yy.c"
 
-#line 467 "lex.yy.c"
+    typedef struct Record
+    {
+        char studID[30];
+        char course[30][35];
+    }Record;
+
+    Record record;
+    int total_count = 0;
+    int upper_count = 0;
+    int buffer_index = 0;
+    int type = 0;
+    int course_index = 0;
+#line 491 "lex.yy.c"
+
+#line 493 "lex.yy.c"
 
 #define INITIAL 0
-#define STUDID_UPPER 1
-#define STUDID_DIGIT 2
+#define UPPER 1
+#define DIGIT 2
+#define GREATER_THAN 3
+#define LESSER_THAN 4
+#define CREDS 5
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -682,9 +711,9 @@ YY_DECL
 		}
 
 	{
-#line 20 "file.l"
+#line 27 "file.l"
 
-#line 688 "lex.yy.c"
+#line 717 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -711,13 +740,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 21 )
+				if ( yy_current_state >= 41 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 22 );
+		while ( yy_base[yy_current_state] != 85 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -744,47 +773,59 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 21 "file.l"
+#line 28 "file.l"
 { /* Ignore input before $ with spaces */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 23 "file.l"
+#line 30 "file.l"
 {
-    BEGIN(STUDID_UPPER);
-    studID.total_count = 0;
-    studID.upper_count = 0;
-    studID.bufferIndex = 0;
-    memset(studID.recordBuffer, 0, sizeof(studID.recordBuffer));
+    BEGIN(UPPER);
+    total_count = 0;
+    upper_count = 0;
+    buffer_index = 0;
+    type = 0;
+    course_index = 0;
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 30 "file.l"
+#line 39 "file.l"
 {
-    if (studID.total_count < studID.max_length) {
-        studID.recordBuffer[studID.bufferIndex++] = yytext[0];
-        studID.total_count++;
-        studID.upper_count++;
-    } else {
-        printf("\nStudent ID exceeds maximum length!\n");
+    if (total_count < 30)
+    {   
+        if (type == 0)
+            record.studID[buffer_index++] = yytext[0];
+        else
+        {
+            record.course[course_index][buffer_index++] = yytext[0];
+            printf("%c", yytext[0]);
+        }
+
+        total_count++;
+        upper_count++;
+    }
+
+    else
+    {
+        printf("\nwrong ID!\n");
         BEGIN(INITIAL);
     }
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 40 "file.l"
+#line 61 "file.l"
 {
-    if (studID.upper_count > 0)
+    if (upper_count > 0)
     {
-        BEGIN(STUDID_DIGIT);
+        BEGIN(DIGIT);
         unput(yytext[0]);
     }
 
     else
     {
-        printf("\nincorrect format\n");
+        printf("\nwrong ID!\n");
         BEGIN(INITIAL);
     }
 }
@@ -792,62 +833,118 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 53 "file.l"
+#line 75 "file.l"
 {
-    printf("\ninvalid string\n");
+    printf("\nwrong ID!\n");
     BEGIN(INITIAL);
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 57 "file.l"
+#line 80 "file.l"
 {
-    printf("\nInvalid student ID format!\n");
+    printf("\nwrong ID!\n");
     BEGIN(INITIAL);
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 61 "file.l"
+#line 85 "file.l"
 {
-    if (studID.total_count < studID.max_length) {
-        studID.recordBuffer[studID.bufferIndex++] = yytext[0];
-        studID.total_count++;
-    } else {
-        printf("\nStudent ID exceeds maximum length!\n");
+    if (total_count < 30) 
+    {
+        if (type == 0)
+            record.studID[buffer_index++] = yytext[0];
+        else
+        {
+            record.course[course_index][buffer_index++] = yytext[0];
+            printf("%c", yytext[0]);
+        }
+
+        total_count++;
+    } 
+    
+    else 
+    {
+        printf("\nwrong ID!\n");
         BEGIN(INITIAL);
     }
 }
 	YY_BREAK
 case 8:
-/* rule 8 can match eol */
 YY_RULE_SETUP
-#line 70 "file.l"
+#line 106 "file.l"
 {
-    studID.recordBuffer[studID.bufferIndex] = '\0'; 
-    if (studID.total_count > 0) {
-        printf("\nCompleted Record: %s\n", studID.recordBuffer);
+    if (type == 0)
+    {
+        record.studID[buffer_index] = '\0';
+        BEGIN(GREATER_THAN);
     }
-    exit(0);   
+        
+    else
+    {
+        BEGIN(CREDS);
+    }
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 77 "file.l"
+#line 119 "file.l"
 {
-    printf("\nInvalid student ID format!\n");
-    BEGIN(INITIAL);
+    BEGIN(UPPER);
+    type = 1;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 81 "file.l"
+#line 124 "file.l"
+{
+    printf("\nno course info found!\n");
+    BEGIN(INITIAL);
+}
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 129 "file.l"
+{
+    record.course[course_index][buffer_index++] = ' ';
+    for (int i = 0; i < yyleng; ++i) {
+        record.course[course_index][buffer_index++] = yytext[i];
+        printf("%c", yytext[i]); 
+    }
+
+    ++course_index;
+    BEGIN(LESSER_THAN);
+}
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 140 "file.l"
+{
+    printf("\nwrong course info found!\n");
+    BEGIN(INITIAL);
+}
+	YY_BREAK
+case 13:
+YY_RULE_SETUP
+#line 145 "file.l"
+{
+    printf("\ncompleted record\n");
+    BEGIN(INITIAL);
+}
+	YY_BREAK
+case 14:
+YY_RULE_SETUP
+#line 149 "file.l"
 ECHO;
 	YY_BREAK
-#line 848 "lex.yy.c"
+#line 942 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
-case YY_STATE_EOF(STUDID_UPPER):
-case YY_STATE_EOF(STUDID_DIGIT):
+case YY_STATE_EOF(UPPER):
+case YY_STATE_EOF(DIGIT):
+case YY_STATE_EOF(GREATER_THAN):
+case YY_STATE_EOF(LESSER_THAN):
+case YY_STATE_EOF(CREDS):
 	yyterminate();
 
 	case YY_END_OF_BUFFER:
@@ -1143,7 +1240,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 21 )
+			if ( yy_current_state >= 41 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1171,11 +1268,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 21 )
+		if ( yy_current_state >= 41 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 20);
+	yy_is_jam = (yy_current_state == 40);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1851,12 +1948,18 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 81 "file.l"
+#line 149 "file.l"
 
 
-int main() 
+int main()
 {
     yylex();
+
+    printf("record ID: %s", record.studID);
+    for (int i = 0; i < course_index; ++i) {
+        printf("course %d: %s\n", i, record.course[i]);
+    }
+
     return 0;
 }
 
