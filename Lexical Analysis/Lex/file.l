@@ -8,6 +8,7 @@
     {
         char studID[30];
         char course[30][35];
+        int courses;
     }Record;
 
     Record record;
@@ -37,24 +38,36 @@
 }
 
 <UPPER>[A-Z] {
-    if (total_count < 30)
-    {   
-        if (type == 0)
+    if (type == 0)
+    {
+        if (total_count < 30)
+        {   
             record.studID[buffer_index++] = yytext[0];
-        else
-        {
-            record.course[course_index][buffer_index++] = yytext[0];
-            printf("%c", yytext[0]);
+            total_count++;
+            upper_count++;
         }
 
-        total_count++;
-        upper_count++;
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
     }
 
     else
     {
-        printf("\nwrong ID!\n");
-        BEGIN(INITIAL);
+        if (total_count < 35)
+        {   
+            record.course[course_index][buffer_index++] = yytext[0];
+            total_count++;
+            upper_count++;
+        }
+
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
     }
 }
 
@@ -73,33 +86,54 @@
 }
 
 <UPPER>.|\n {
+    if (type == 0)
+        record.studID[0] = '\0';
+    else
+        record.course[course_index][0] = '\0';
     printf("\nwrong ID!\n");
     BEGIN(INITIAL);
 }
 
-<DIGIT>[A-Z] {
+<DIGIT>[A-Z]|\n {
+    if (type == 0)
+        record.studID[0] = '\0';
+    else
+        record.course[course_index][0] = '\0';
     printf("\nwrong ID!\n");
     BEGIN(INITIAL);
 }
 
 <DIGIT>[0-9] {
-    if (total_count < 30) 
+    if (type == 0)
     {
-        if (type == 0)
+        if (total_count < 30)
+        {   
             record.studID[buffer_index++] = yytext[0];
-        else
-        {
-            record.course[course_index][buffer_index++] = yytext[0];
-            printf("%c", yytext[0]);
+            total_count++;
+            upper_count++;
         }
 
-        total_count++;
-    } 
-    
-    else 
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
+    }
+
+    else
     {
-        printf("\nwrong ID!\n");
-        BEGIN(INITIAL);
+        if (total_count < 35)
+        {   
+            record.course[course_index][buffer_index++] = yytext[0];
+            total_count++;
+            upper_count++;
+        }
+
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
     }
 }
 
@@ -107,11 +141,13 @@
     if (type == 0)
     {
         record.studID[buffer_index] = '\0';
+        buffer_index = 0;
         BEGIN(GREATER_THAN);
     }
         
     else
     {
+        record.course[course_index][buffer_index++] = ' ';
         BEGIN(CREDS);
     }
 }
@@ -119,31 +155,45 @@
 <GREATER_THAN>[<][ ]* {
     BEGIN(UPPER);
     type = 1;
+    total_count = 0;
+    upper_count = 0;
+    buffer_index = 0;
 }
 
-<GREATER_THAN>. {
-    printf("\nno course info found!\n");
+<GREATER_THAN>.|\n {
+    if (course_index == 0)
+        record.studID[0] = '\0';
+    record.course[course_index][0] = '\0';
+    printf("\nno course info found 1!\n");
     BEGIN(INITIAL);
 }
 
 <CREDS>[2-4][ ](A-?|B-?|C) {
-    record.course[course_index][buffer_index++] = ' ';
     for (int i = 0; i < yyleng; ++i) {
         record.course[course_index][buffer_index++] = yytext[i];
-        printf("%c", yytext[i]); 
     }
 
-    ++course_index;
     BEGIN(LESSER_THAN);
 }
 
 <CREDS>. {
-    printf("\nwrong course info found!\n");
+    printf("\nwrong course info found 2!\n");
+    if (course_index == 0)
+        record.studID[0] = '\0';
+    record.course[course_index][0] = '\0';
     BEGIN(INITIAL);
 }
 
-<LESSER_THAN>[ ]*[>] {
+<LESSER_THAN>[ ]*[>][ ]*[<] {
     printf("\ncompleted record\n");
+    ++course_index;
+    unput(yytext[yyleng - 1]);
+    BEGIN(GREATER_THAN);
+}
+
+<LESSER_THAN>[ ]*[>]\n {
+    printf("\ncompleted record\n");
+    ++course_index;
     BEGIN(INITIAL);
 }
 %%
@@ -152,8 +202,9 @@ int main()
 {
     yylex();
 
-    printf("record ID: %s", record.studID);
-    for (int i = 0; i < course_index; ++i) {
+    printf("record ID: %s\n", record.studID);
+    for (int i = 0; i < course_index; ++i) 
+    {
         printf("course %d: %s\n", i, record.course[i]);
     }
 

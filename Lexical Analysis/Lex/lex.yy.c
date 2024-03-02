@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 14
-#define YY_END_OF_BUFFER 15
+#define YY_NUM_RULES 15
+#define YY_END_OF_BUFFER 16
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -360,12 +360,13 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[41] =
+static const flex_int16_t yy_accept[44] =
     {   0,
         0,    0,    0,    0,    8,    8,    0,    0,    0,    0,
-        0,    0,   15,    1,    2,    5,    4,    3,   14,    8,
-        7,    6,   10,    9,   14,   13,   12,   12,    1,    2,
-        8,    9,    0,   13,    0,   11,   11,   11,   11,    0
+        0,    0,   16,    1,    2,    5,    4,    3,   15,    6,
+        8,    7,   10,    9,   15,   15,   12,   12,    1,    2,
+        8,    9,    0,    0,   14,    0,   13,    0,   11,   11,
+       11,   11,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -406,51 +407,51 @@ static const YY_CHAR yy_meta[14] =
         1,    1,    1
     } ;
 
-static const flex_int16_t yy_base[46] =
+static const flex_int16_t yy_base[49] =
     {   0,
-       40,   39,    0,    0,   13,    0,   25,   32,   38,   45,
-       53,   59,   42,    0,   36,   85,   85,   85,   85,   35,
-       85,   85,   85,   34,   64,   85,   85,   33,    0,   32,
-       29,   28,    0,   85,   64,   25,   24,   85,   85,   85,
-       76,   78,   80,   82,   27
+       45,   44,    0,    0,   13,    0,   37,   36,   24,   31,
+       39,   45,   43,    0,   39,   78,   78,   78,   78,   78,
+       36,   78,   78,   35,   50,   58,   78,   34,    0,   33,
+       32,   29,    0,    0,   78,   29,   78,   57,   25,   24,
+       78,   78,   78,   69,   71,   73,   75,   27
     } ;
 
-static const flex_int16_t yy_def[46] =
+static const flex_int16_t yy_def[49] =
     {   0,
-       41,   41,   40,    3,   40,    5,   42,   42,   43,   43,
-       44,   44,   40,   45,   40,   40,   40,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40,   45,   40,
-       40,   40,   25,   40,   40,   40,   40,   40,   40,    0,
-       40,   40,   40,   40,   40
+       44,   44,   43,    3,   43,    5,   45,   45,   46,   46,
+       47,   47,   43,   48,   43,   43,   43,   43,   43,   43,
+       43,   43,   43,   43,   43,   43,   43,   43,   48,   43,
+       43,   43,   25,   26,   43,   26,   43,   43,   43,   43,
+       43,   43,    0,   43,   43,   43,   43,   43
     } ;
 
-static const flex_int16_t yy_nxt[99] =
+static const flex_int16_t yy_nxt[92] =
     {   0,
        16,   16,   16,   16,   16,   17,   17,   16,   16,   18,
-       18,   18,   18,   19,   19,   20,   19,   19,   21,   21,
-       19,   19,   22,   22,   22,   22,   19,   29,   39,   38,
-       32,   31,   24,   19,   30,   35,   32,   31,   30,   24,
-       25,   40,   15,   15,   40,   40,   26,   25,   40,   40,
-       40,   40,   40,   26,   19,   40,   40,   40,   40,   28,
-       19,   40,   40,   40,   40,   28,   33,   40,   40,   40,
-       40,   40,   34,   36,   37,   38,   14,   14,   23,   23,
-       19,   19,   27,   27,   13,   40,   40,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40
+       18,   18,   18,   19,   20,   21,   19,   19,   22,   22,
+       19,   19,   20,   20,   20,   20,   25,   29,   42,   41,
+       43,   32,   26,   25,   31,   30,   38,   32,   31,   26,
+       19,   30,   43,   24,   24,   28,   19,   15,   15,   43,
+       43,   28,   33,   43,   43,   43,   43,   43,   34,   35,
+       36,   43,   43,   43,   43,   37,   39,   40,   41,   14,
+       14,   23,   23,   19,   19,   27,   27,   13,   43,   43,
+       43,   43,   43,   43,   43,   43,   43,   43,   43,   43,
+       43
 
     } ;
 
-static const flex_int16_t yy_chk[99] =
+static const flex_int16_t yy_chk[92] =
     {   0,
         3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
         3,    3,    3,    5,    5,    5,    5,    5,    5,    5,
-        5,    5,    5,    5,    5,    5,    7,   45,   37,   36,
-       32,   31,    7,    8,   30,   28,   24,   20,   15,    8,
-        9,   13,    2,    1,    0,    0,    9,   10,    0,    0,
-        0,    0,    0,   10,   11,    0,    0,    0,    0,   11,
-       12,    0,    0,    0,    0,   12,   25,    0,    0,    0,
-        0,    0,   25,   35,   35,   35,   41,   41,   42,   42,
-       43,   43,   44,   44,   40,   40,   40,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40
+        5,    5,    5,    5,    5,    5,    9,   48,   40,   39,
+       36,   32,    9,   10,   31,   30,   28,   24,   21,   10,
+       11,   15,   13,    8,    7,   11,   12,    2,    1,    0,
+        0,   12,   25,    0,    0,    0,    0,    0,   25,   26,
+       26,    0,    0,    0,    0,   26,   38,   38,   38,   44,
+       44,   45,   45,   46,   46,   47,   47,   43,   43,   43,
+       43,   43,   43,   43,   43,   43,   43,   43,   43,   43,
+       43
 
     } ;
 
@@ -479,6 +480,7 @@ char *yytext;
     {
         char studID[30];
         char course[30][35];
+        int courses;
     }Record;
 
     Record record;
@@ -487,9 +489,9 @@ char *yytext;
     int buffer_index = 0;
     int type = 0;
     int course_index = 0;
-#line 491 "lex.yy.c"
-
 #line 493 "lex.yy.c"
+
+#line 495 "lex.yy.c"
 
 #define INITIAL 0
 #define UPPER 1
@@ -711,9 +713,9 @@ YY_DECL
 		}
 
 	{
-#line 27 "file.l"
+#line 28 "file.l"
 
-#line 717 "lex.yy.c"
+#line 719 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -740,13 +742,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 41 )
+				if ( yy_current_state >= 44 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 85 );
+		while ( yy_base[yy_current_state] != 78 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -773,12 +775,12 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 28 "file.l"
+#line 29 "file.l"
 { /* Ignore input before $ with spaces */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 30 "file.l"
+#line 31 "file.l"
 {
     BEGIN(UPPER);
     total_count = 0;
@@ -790,32 +792,44 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 39 "file.l"
+#line 40 "file.l"
 {
-    if (total_count < 30)
-    {   
-        if (type == 0)
+    if (type == 0)
+    {
+        if (total_count < 30)
+        {   
             record.studID[buffer_index++] = yytext[0];
-        else
-        {
-            record.course[course_index][buffer_index++] = yytext[0];
-            printf("%c", yytext[0]);
+            total_count++;
+            upper_count++;
         }
 
-        total_count++;
-        upper_count++;
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
     }
 
     else
     {
-        printf("\nwrong ID!\n");
-        BEGIN(INITIAL);
+        if (total_count < 35)
+        {   
+            record.course[course_index][buffer_index++] = yytext[0];
+            total_count++;
+            upper_count++;
+        }
+
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
     }
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 61 "file.l"
+#line 74 "file.l"
 {
     if (upper_count > 0)
     {
@@ -833,112 +847,157 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 75 "file.l"
+#line 88 "file.l"
 {
+    if (type == 0)
+        record.studID[0] = '\0';
+    else
+        record.course[course_index][0] = '\0';
     printf("\nwrong ID!\n");
     BEGIN(INITIAL);
 }
 	YY_BREAK
 case 6:
+/* rule 6 can match eol */
 YY_RULE_SETUP
-#line 80 "file.l"
+#line 97 "file.l"
 {
+    if (type == 0)
+        record.studID[0] = '\0';
+    else
+        record.course[course_index][0] = '\0';
     printf("\nwrong ID!\n");
     BEGIN(INITIAL);
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 85 "file.l"
+#line 106 "file.l"
 {
-    if (total_count < 30) 
+    if (type == 0)
     {
-        if (type == 0)
+        if (total_count < 30)
+        {   
             record.studID[buffer_index++] = yytext[0];
-        else
-        {
-            record.course[course_index][buffer_index++] = yytext[0];
-            printf("%c", yytext[0]);
+            total_count++;
+            upper_count++;
         }
 
-        total_count++;
-    } 
-    
-    else 
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
+    }
+
+    else
     {
-        printf("\nwrong ID!\n");
-        BEGIN(INITIAL);
+        if (total_count < 35)
+        {   
+            record.course[course_index][buffer_index++] = yytext[0];
+            total_count++;
+            upper_count++;
+        }
+
+        else
+        {
+            printf("\nwrong ID!\n");
+            BEGIN(INITIAL);
+        }
     }
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 106 "file.l"
+#line 140 "file.l"
 {
     if (type == 0)
     {
         record.studID[buffer_index] = '\0';
+        buffer_index = 0;
         BEGIN(GREATER_THAN);
     }
         
     else
     {
+        record.course[course_index][buffer_index++] = ' ';
         BEGIN(CREDS);
     }
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 119 "file.l"
+#line 155 "file.l"
 {
     BEGIN(UPPER);
     type = 1;
+    total_count = 0;
+    upper_count = 0;
+    buffer_index = 0;
 }
 	YY_BREAK
 case 10:
+/* rule 10 can match eol */
 YY_RULE_SETUP
-#line 124 "file.l"
+#line 163 "file.l"
 {
-    printf("\nno course info found!\n");
+    if (course_index == 0)
+        record.studID[0] = '\0';
+    record.course[course_index][0] = '\0';
+    printf("\nno course info found 1!\n");
     BEGIN(INITIAL);
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 129 "file.l"
+#line 171 "file.l"
 {
-    record.course[course_index][buffer_index++] = ' ';
     for (int i = 0; i < yyleng; ++i) {
         record.course[course_index][buffer_index++] = yytext[i];
-        printf("%c", yytext[i]); 
     }
 
-    ++course_index;
+    printf("%s", record.course[course_index]);
     BEGIN(LESSER_THAN);
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 140 "file.l"
+#line 180 "file.l"
 {
-    printf("\nwrong course info found!\n");
+    printf("\nwrong course info found 2!\n");
+    if (course_index == 0)
+        record.studID[0] = '\0';
+    record.course[course_index][0] = '\0';
     BEGIN(INITIAL);
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 145 "file.l"
+#line 188 "file.l"
 {
+    printf("ping\n");
     printf("\ncompleted record\n");
-    BEGIN(INITIAL);
+    ++course_index;
+    unput(yytext[yyleng - 1]);
+    BEGIN(GREATER_THAN);
 }
 	YY_BREAK
 case 14:
+/* rule 14 can match eol */
 YY_RULE_SETUP
-#line 149 "file.l"
+#line 196 "file.l"
+{
+    printf("\ncompleted record\n");
+    ++course_index;
+    BEGIN(INITIAL);
+}
+	YY_BREAK
+case 15:
+YY_RULE_SETUP
+#line 201 "file.l"
 ECHO;
 	YY_BREAK
-#line 942 "lex.yy.c"
+#line 1001 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(UPPER):
 case YY_STATE_EOF(DIGIT):
@@ -1240,7 +1299,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 41 )
+			if ( yy_current_state >= 44 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1268,11 +1327,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 41 )
+		if ( yy_current_state >= 44 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 40);
+	yy_is_jam = (yy_current_state == 43);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1948,15 +2007,16 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 149 "file.l"
+#line 201 "file.l"
 
 
 int main()
 {
     yylex();
 
-    printf("record ID: %s", record.studID);
-    for (int i = 0; i < course_index; ++i) {
+    printf("record ID: %s\n", record.studID);
+    for (int i = 0; i < course_index; ++i) 
+    {
         printf("course %d: %s\n", i, record.course[i]);
     }
 
