@@ -328,16 +328,16 @@ void printStudentRecords(struct record studentRecords[]) {
             x = 10;
 
         else if (strcmp(courses[i].grade, "A-") == 0)
-            x = 9;
-
-        else if (strcmp(courses[i].grade, "B") == 0)
             x = 8;
 
+        else if (strcmp(courses[i].grade, "B") == 0)
+            x = 6;
+
         else if (strcmp(courses[i].grade, "B-") == 0)
-            x = 7;
+            x = 4;
 
         else if (strcmp(courses[i].grade, "C") == 0)
-            x = 6;
+            x = 2;
 
         sum += x * courses[i].credit;
         credsum += courses[i].credit;
