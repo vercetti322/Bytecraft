@@ -11,8 +11,8 @@
     int wrongid = 0;
     char student_id[31];
     char student[31];
-    double cgpa = 0.0;
-    int unique_courses = 0;
+    double CGPA;
+    int num_courses = 0;
 
     struct course 
     {
@@ -48,7 +48,9 @@
 [.]*[\/][\/][.]*[$] {
     BEGIN(INITIAL);
 }
-[^$]+ { /* Ignore input before $ with spaces */ }
+[^$]+ { 
+
+}
 
 [$][ ]* {
     BEGIN(STUD_ID);
@@ -312,14 +314,7 @@ void printStudentRecords(struct record studentRecords[]) {
                 }
             }
 
-            fprintf(outputFile,"\n");
         }
-    }
-
-    // Print the unique courses
-    fprintf(outputFile, "Unique Courses:\n");
-    for (int i = 0; i < numCourses; i++) {
-        fprintf(outputFile, "Course ID: %s, Grade: %s, Credit: %d\n", courses[i].ID, courses[i].grade, courses[i].credit);
     }
 
     double cgpa = 0.0;
@@ -349,11 +344,8 @@ void printStudentRecords(struct record studentRecords[]) {
     }
 
     double gpa = (double)sum / credsum;
-    printf("%f\n", gpa);
-
-    fprintf(outputFile, "CGPA: %lf\n", gpa);
-    fprintf(outputFile,"Unique: %d\n", numCourses);
-
+    CGPA = gpa;
+    num_courses = numCourses;
 }
 
 int main()
@@ -381,11 +373,12 @@ int main()
 
     // Run the lexer
     yylex();
-
-    fprintf(outputFile, "Comments: %d\n", countComments("input.txt"));
-    fprintf(outputFile, "Valid records: %d\n", countRecords("input.txt") - wrongid);
-
     printStudentRecords(studentRecords);
+
+    if (CGPA > 0)
+        fprintf(outputFile, "@%d@%d@%d@%d#", countRecords("input.txt") - wrongid, countComments("input.txt"), num_courses, (int)(round(100 * CGPA)));
+    else
+        fprintf(outputFile, "@%d@%d@0@0#", countRecords("input.txt") - wrongid, countComments("input.txt"));
 
     // Close files
     fclose(inputFile);
