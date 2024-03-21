@@ -351,7 +351,7 @@ void printStudentRecords(struct record studentRecords[]) {
 int main()
 {
     // Open input file for reading
-    inputFile = fopen("input.txt", "r");
+    inputFile = fopen("data.txt", "r");
     if (inputFile == NULL) 
     {
         perror("Error opening input file");
@@ -366,7 +366,7 @@ int main()
         return 1;
     }
 
-    readStudentId("data.txt");
+    readStudentId("input.txt");
 
     // Redirect input and output
     yyin = inputFile;
@@ -376,9 +376,9 @@ int main()
     printStudentRecords(studentRecords);
 
     if (CGPA > 0)
-        fprintf(outputFile, "@%d@%d@%d@%d#", countRecords("input.txt") - wrongid, countComments("input.txt"), num_courses, (int)(round(100 * CGPA)));
+        fprintf(outputFile, "@%d@%d@%d@%d#", countRecords("data.txt") - wrongid, countComments("data.txt"), num_courses, (int)(round(100 * CGPA)));
     else
-        fprintf(outputFile, "@%d@%d@0@0#", countRecords("input.txt") - wrongid, countComments("input.txt"));
+        fprintf(outputFile, "@%d@%d@0@0#", countRecords("data.txt") - wrongid, countComments("data.txt"));
 
     // Close files
     fclose(inputFile);
