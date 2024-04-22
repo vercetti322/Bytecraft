@@ -3,13 +3,13 @@
 extern int yylex();
 extern int yylineno;
 void yyerror(char *s);
-
 extern int yydebug;
 %}
 
-%token INTEGER REAL CHAR BOOLEAN KEYWORD IDENTIFIER ADD SUBTRACT MULTIPLY DIVIDE MODULO EQUALS NOTEQUAL LESS GREATER LESSEQUAL GREATEREQUAL SEMICOLON COMMA COLON LPAREN RPAREN STRING_LITERAL
-%token PROGRAM BEGIN_KEYWORD END VAR INTEGER_KEYWORD REAL_KEYWORD CHAR_KEYWORD BOOLEAN_KEYWORD IF THEN ELSE WHILE DO FOR TO READ WRITE ASSIGN PERIOD 
 
+%token INTEGER REAL CHAR BOOLEAN KEYWORD IDENTIFIER ADD SUBTRACT MULTIPLY DIVIDE MODULO EQUALS NOTEQUAL LESS GREATER LESSEQUAL GREATEREQUAL SEMICOLON COMMA COLON LPAREN RPAREN STRING_LITERAL
+%token PROGRAM BEGIN_KEYWORD END VAR INTEGER_KEYWORD REAL_KEYWORD CHAR_KEYWORD BOOLEAN_KEYWORD IF THEN ELSE WHILE DO FOR TO READ WRITE ASSIGN PERIOD DOWNTO OF ARRAY_KEYWORD LBRAC RBRAC
+%token ARRAY_RANGE
 %%
 
 program:
@@ -39,6 +39,7 @@ type:
     | REAL_KEYWORD
     | CHAR_KEYWORD
     | BOOLEAN_KEYWORD
+    | ARRAY_KEYWORD LBRAC ARRAY_RANGE RBRAC OF type
     ;
 
 statements:
@@ -56,6 +57,7 @@ statement:
 
 assignment_statement:
     IDENTIFIER ASSIGN expression SEMICOLON
+    | array_access ASSIGN expression SEMICOLON
     ;
 
 expression:
@@ -68,6 +70,7 @@ term:
     factor
     | term MULTIPLY factor
     | term DIVIDE factor
+    | term MODULO factor
     ;
 
 factor:
@@ -75,11 +78,16 @@ factor:
     | REAL
     | IDENTIFIER
     | LPAREN expression RPAREN
+    | array_access
+    ;
+
+array_access:
+    IDENTIFIER LBRAC expression RBRAC
     ;
 
 conditional_statement:
-    IF condition THEN BEGIN_KEYWORD statements END
-    | IF condition THEN BEGIN_KEYWORD statements END ELSE BEGIN_KEYWORD statements END
+    IF condition THEN BEGIN_KEYWORD statements END SEMICOLON
+    | IF condition THEN BEGIN_KEYWORD statements END ELSE BEGIN_KEYWORD statements END SEMICOLON
     ;
 
 condition:
@@ -92,17 +100,24 @@ condition:
     ;
 
 loop_statement:
-    WHILE condition DO BEGIN_KEYWORD statements END
-    | FOR IDENTIFIER ASSIGN expression TO expression DO BEGIN_KEYWORD statements END
+    WHILE condition DO BEGIN_KEYWORD statements END SEMICOLON
+    | FOR IDENTIFIER ASSIGN expression TO expression DO BEGIN_KEYWORD statements END SEMICOLON
+    | FOR IDENTIFIER ASSIGN expression DOWNTO expression DO BEGIN_KEYWORD statements END SEMICOLON
     ;
 
 write_statement: 
-    WRITE LPAREN STRING_LITERAL SEMICOLON
-    | WRITE LPAREN IDENTIFIER RPAREN SEMICOLON
+    WRITE LPAREN write_argument RPAREN SEMICOLON
+    ;
+
+write_argument:
+    STRING_LITERAL
+    | IDENTIFIER_LIST
+    | array_access
     ;
 
 read_statement:
     READ LPAREN IDENTIFIER RPAREN SEMICOLON
+    | READ LPAREN array_access RPAREN SEMICOLON
     ;
 
 %%
