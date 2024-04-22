@@ -1,0 +1,7 @@
+program AddTwoNumbers ;
+var
+    num1 : Integer;
+begin
+    write("hi");
+    read(num1);
+end.
