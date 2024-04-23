@@ -8,9 +8,8 @@
 
 [ \t]+               ;  // oversee white spaces
 \n                   { yylineno++; }  // Increment line counter on new lines
-
 "//"[^"\n"]*         ;  // Ignore single line comments
-
+\"[^\"\n]*\"     { return STRING_LITERAL; }
 "program"            { return PROGRAM; }
 "begin"              { return BEGIN_KEYWORD; }
 "end"                { return END; }
@@ -26,10 +25,13 @@
 "do"                 { return DO; }
 "for"                { return FOR; }
 "to"                 { return TO; }
+"downto"             { return DOWNTO; }
 "read"               { return READ; }
 "write"              { return WRITE; }
+"array"              { return ARRAY_KEYWORD; }
+"of"                 { return OF; }
 ":="                 { return ASSIGN; }
-"\"[^\n\"]*\""    { return STRING_LITERAL; }
+[0-9]+\.\.[0-9]+   { return ARRAY_RANGE; }
 [a-zA-Z_][a-zA-Z0-9_]*  { return IDENTIFIER; }
 [0-9]+              { return INTEGER; }
 [0-9]+"."[0-9]*     { return REAL; }
@@ -50,6 +52,8 @@
 "("                 { return LPAREN; }
 ")"                 { return RPAREN; }
 "."                 { return PERIOD; }
+"["                 { return LBRAC; }
+"]"                 { return RBRAC; }
 
 %%
 
