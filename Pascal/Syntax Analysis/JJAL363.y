@@ -96,6 +96,7 @@ condition:
     | expression GREATER expression
     | expression LESSEQUAL expression
     | expression GREATEREQUAL expression
+    | IDENTIFIER
     ;
 
 loop_statement:
