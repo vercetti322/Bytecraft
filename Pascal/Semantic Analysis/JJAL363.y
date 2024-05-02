@@ -3,6 +3,7 @@
 extern int yylex();
 extern int yylineno;
 void yyerror(char *s);
+extern int yydebug;
 %}
 
 
@@ -127,16 +128,6 @@ void yyerror(char *s) {
 }
 
 int main() {
-    int result = yyparse();
-    if (result == 1)
-    {
-        printf("SYNTAX ERROR!\n");
-    }
-
-    else 
-    {
-        printf("VALID CODE!\n");
-    }
-
-    return result;
+    yydebug = 1;
+    return yyparse();
 }

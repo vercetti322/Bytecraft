@@ -1,24 +1,20 @@
-program NumberOfDigits;
+program ArrayAverage;
 var
-  number, count: Integer;
-  flag : boolean; 
+  numbers: array[1..5] of Integer;
+  i, sum : Integer;
+  average : real;
 begin
-  write("Enter a number:");
-  read(number);
-  count := 0;
-  while number <> 0 do
+  write("Enter 5 integer values:");
+  for i := 1 to 5 do
   begin
-    if flag  then
-    begin
-      count:=count+1;
-      flag := 1;
-    end
-    else 
-    begin
-     count :=count;
-    end; 
-    number := number / 10;
+    read(numbers[i]);
   end;
-  write("The number of digits is: ");
-  write(count);
+  sum := 0;
+  for i := 1 to 5 do
+  begin
+    sum := sum + numbers[i];
+  end;
+  average := sum / 5;
+  write("The sum and average are: "); 
+  write(sum, average);
 end.
